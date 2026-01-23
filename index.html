@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Language Quiz Picker</title>
+    <style>
+        :root {
+            --bg: #f3f4f6;
+            --card-bg: #ffffff;
+            --primary: #6366f1;
+            --text: #1e293b;
+            --transition-speed: 0.5s;
+        }
+
+        body {
+            font-family: 'Inter', system-ui, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            overflow-x: hidden;
+        }
+
+        .quiz-window {
+            width: 100%;
+            max-width: 800px;
+            padding: 60px 20px;
+        }
+
+        /* The Stage Container */
+        #stage {
+            position: relative;
+            width: 100%;
+            /* min-height ensures the page doesn't jump when grid is empty */
+            min-height: 600px;
+        }
+
+        .selection-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            width: 100%;
+
+            /* Crucial for simultaneous movement */
+            position: absolute;
+            top: 0;
+            left: 0;
+
+            transition: transform var(--transition-speed) cubic-bezier(0.4, 0, 0.2, 1),
+                        opacity var(--transition-speed) ease;
+            pointer-events: auto;
+        }
+
+        /* Mobile fallback */
+        @media (max-width: 600px) {
+            .selection-grid { grid-template-columns: repeat(2, 1fr); }
+        }
+
+        /* Animation States */
+        .state-right { transform: translateX(120%); opacity: 0; pointer-events: none; }
+        .state-left { transform: translateX(-120%); opacity: 0; pointer-events: none; }
+        .state-center { transform: translateX(0); opacity: 1; pointer-events: auto; }
+
+        /* Cards */
+        .card {
+            background: var(--card-bg);
+            aspect-ratio: 1 / 1;
+            border-radius: 28px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 1.1rem;
+            cursor: pointer;
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
+            transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s;
+            border: 2px solid transparent;
+        }
+
+        .card:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1);
+            border-color: var(--primary);
+        }
+
+        .card-icon { font-size: 2.8rem; margin-bottom: 12px; }
+
+        .back-card {
+            background: #e5e7eb;
+            border: 2px dashed #9ca3af;
+            color: #4b5563;
+        }
+    </style>
+</head>
+<body>
+
+<div class="quiz-window">
+    <div id="stage"></div>
+</div>
+
+<script>
+    const data = {
+        "Basics": { icon: "💡", subs: [
+            { name: "Greetings", icon: "👋" }, { name: "Verbs", icon: "🏃" },
+            { name: "Adjectives", icon: "✨" }, { name: "Numbers", icon: "🔢" },
+            { name: "Dates & Times", icon: "📅" }, { name: "Colors", icon: "🎨" },
+            { name: "Conjunctions", icon: "🔗" }
+        ]},
+        "People": { icon: "👥", subs: [
+            { name: "Family", icon: "👨‍👩‍👧‍👦" }, { name: "Social", icon: "🤝" }, { name: "Professions", icon: "💼" }
+        ]},
+        "Home": { icon: "🏠", subs: [
+            { name: "Rooms", icon: "🛋️" }, { name: "Objects", icon: "📦" }
+        ]},
+        "Food": { icon: "🍎", subs: [
+            { name: "Fruits", icon: "🍇" }, { name: "Vegetables", icon: "🥦" },
+            { name: "Meats", icon: "🥩" }, { name: "Dairy", icon: "🥛" },
+            { name: "Pantry", icon: "🧂" }, { name: "Drinks", icon: "☕" }
+        ]},
+        "Travel": { icon: "✈️", subs: [
+            { name: "Places", icon: "📍" }, { name: "Transport", icon: "🚌" },
+            { name: "Directions", icon: "🧭" }, { name: "Weather", icon: "☁️" }
+        ]},
+        "Scenarios": { icon: "💬", subs: [
+            { name: "At the Store", icon: "🛒" }, { name: "In a Restaurant", icon: "🍝" },
+            { name: "At the Doctor", icon: "🏥" }, { name: "At the School", icon: "📎" }
+        ]}
+    };
+
+    const stage = document.getElementById('stage');
+
+    function createGrid(type, parentKey = null) {
+        const grid = document.createElement('div');
+        grid.className = 'selection-grid';
+
+        if (type === 'categories') {
+            Object.entries(data).forEach(([name, info]) => {
+                grid.appendChild(createCard(name, info.icon, () => transition(name)));
+            });
+        } else {
+            grid.appendChild(createCard("Back", "⬅️", () => transition(null), true));
+            data[parentKey].subs.forEach(sub => {
+                grid.appendChild(createCard(sub.name, sub.icon, () => alert(`Quiz: ${sub.name}`)));
+            });
+        }
+        return grid;
+    }
+
+    function createCard(title, icon, onClick, isBack = false) {
+        const div = document.createElement('div');
+        div.className = isBack ? 'card back-card' : 'card';
+        div.innerHTML = `<span class="card-icon">${icon}</span><span>${title}</span>`;
+        div.onclick = onClick;
+        return div;
+    }
+
+    function transition(categoryName) {
+        const isGoingToSub = categoryName !== null;
+        const oldGrid = stage.querySelector('.selection-grid');
+        const newGrid = isGoingToSub ? createGrid('subs', categoryName) : createGrid('categories');
+
+        // 1. Position the new grid off-screen before adding to DOM
+        newGrid.classList.add(isGoingToSub ? 'state-right' : 'state-left');
+        stage.appendChild(newGrid);
+
+        // 2. Small delay to ensure the browser registers the starting position
+        requestAnimationFrame(() => {
+            // 3. Move old grid out
+            oldGrid.classList.remove('state-center');
+            oldGrid.classList.add(isGoingToSub ? 'state-left' : 'state-right');
+
+            // 4. Move new grid in
+            newGrid.classList.remove(isGoingToSub ? 'state-right' : 'state-left');
+            newGrid.classList.add('state-center');
+        });
+
+        // 5. Cleanup
+        setTimeout(() => oldGrid.remove(), 500);
+    }
+
+    // Initial Load
+    const initialGrid = createGrid('categories');
+    initialGrid.classList.add('state-center');
+    stage.appendChild(initialGrid);
+
+</script>
+
+</body>
+</html>
