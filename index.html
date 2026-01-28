@@ -1,149 +1,170 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>KartuWords</title>
-    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <style>
-        /* Global Navigation Transitions */
-        .slide-left-enter-active, .slide-left-leave-active,
-        .slide-right-enter-active, .slide-right-leave-active {
-            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-            position: absolute;
-            width: 100%;
-        }
-        .slide-left-enter-from { transform: translateX(100%); opacity: 0; }
-        .slide-left-leave-to { transform: translateX(-100%); opacity: 0; }
-        .slide-right-enter-from { transform: translateX(-100%); opacity: 0; }
-        .slide-right-leave-to { transform: translateX(100%); opacity: 0; }
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+		<title>KartuWords</title>
+		<script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+		<script src="https://cdn.tailwindcss.com"></script>
+		<style>
+/* Global Navigation Transitions */
+.slide-left-enter-active, .slide-left-leave-active,
+.slide-right-enter-active, .slide-right-leave-active {
+	transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+	position: absolute;
+	width: 100%;
+}
+				.slide-left-enter-from { transform: translateX(100%); opacity: 0; }
+				.slide-left-leave-to { transform: translateX(-100%); opacity: 0; }
+				.slide-right-enter-from { transform: translateX(-100%); opacity: 0; }
+				.slide-right-leave-to { transform: translateX(100%); opacity: 0; }
 
-        /* Inner Question Transition */
-        .slide-question-enter-active, .slide-question-leave-active {
-            transition: all 0.45s ease-in-out;
-            position: absolute;
-            width: 100%;
-        }
-        .slide-question-enter-from { transform: translateX(100%); opacity: 0; }
-        .slide-question-leave-to { transform: translateX(-100%); opacity: 0; }
+				/* Inner Question Transition */
+				.slide-question-enter-active, .slide-question-leave-active {
+					transition: all 0.45s ease-in-out;
+					position: absolute;
+					width: 100%;
+				}
+				.slide-question-enter-from { transform: translateX(100%); opacity: 0; }
+				.slide-question-leave-to { transform: translateX(-100%); opacity: 0; }
 
-        html, body { height: 100%; overflow: hidden; margin: 0; background-color: #f8fafc; }
-        .grid-layout {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            grid-template-rows: repeat(3, 1fr);
-            gap: 0.75rem;
-            height: 100%;
-        }
-    </style>
-</head>
-<body class="font-sans antialiased text-slate-900">
-    <div id="app" class="h-screen flex flex-col p-4 max-w-md mx-auto relative overflow-hidden">
+				html, body { height: 100%; overflow: hidden; margin: 0; background-color: #f8fafc; }
+				.grid-layout {
+					display: grid;
+					grid-template-columns: repeat(2, 1fr);
+					grid-template-rows: repeat(3, 1fr);
+					gap: 0.75rem;
+					height: 100%;
+				}
+				/* Ensure the app container takes exactly the full height */
+				#app {
+					height: 100vh;
+					display: flex;
+					flex-direction: column;
+				}
 
-        <header class="flex justify-between items-center mb-2 z-50 shrink-0 h-12">
-            <div class="flex items-center gap-1 text-2xl font-bold">
-                <button @click="navigate('categories')" class="p-2 hover:bg-slate-200 rounded-lg">🏠</button>
-                <span v-if="currentCategory" @click="navigate('subcategories')" class="cursor-pointer flex items-center">
-                    <span class="mx-1 text-slate-300 text-sm">/</span>
-                    <span class="hover:scale-110 transition-transform">{{ currentCategory[0] }}</span>
-                </span>
-                <span v-if="view === 'study' && currentSub" class="flex items-center">
-                    <span class="mx-1 text-slate-300 text-sm">/</span>
-                    <span class="text-blue-600">{{ currentSub[0] }}</span>
-                </span>
-            </div>
-            <button @click="showSettings = true" class="p-2 text-xl hover:bg-slate-200 rounded-lg">⚙️</button>
-        </header>
+				/* Force the main content to take all available space */
+				main {
+					flex: 1;
+					position: relative;
+					overflow: hidden;
+				}
+		</style>
+	</head>
+	<body class="font-sans antialiased text-slate-900">
+		<div id="app" class="h-screen flex flex-col p-4 max-w-md mx-auto relative overflow-hidden">
 
-        <main class="relative flex-1 overflow-hidden">
-            <transition :name="transitionName">
+			<header class="flex justify-between items-center mb-2 z-50 shrink-0 h-12">
+				<div class="flex items-center gap-1 text-2xl font-bold">
+					<button @click="navigate('categories')" class="p-2 hover:bg-slate-200 rounded-lg">🏠</button>
+					<span v-if="currentCategory" @click="navigate('subcategories')" class="cursor-pointer flex items-center">
+						<span class="mx-1 text-slate-300 text-sm">/</span>
+						<span class="hover:scale-110 transition-transform">{{ currentCategory[0] }}</span>
+					</span>
+					<span v-if="view === 'study' && currentSub" class="flex items-center">
+						<span class="mx-1 text-slate-300 text-sm">/</span>
+						<span class="text-blue-600">{{ currentSub[0] }}</span>
+					</span>
+				</div>
+				<button @click="showSettings = true" class="p-2 text-xl hover:bg-slate-200 rounded-lg">⚙️</button>
+			</header>
 
-                <div v-if="view === 'categories'" key="categories" class="grid-layout">
-                    <div v-for="cat in mockData" @click="selectCategory(cat)"
-                         class="bg-white rounded-2xl shadow-sm border border-slate-200 flex flex-col items-center justify-center cursor-pointer active:scale-95 transition-all">
-                        <span class="text-4xl mb-1">{{ cat[0] }}</span>
-                        <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest">{{ getTranslation(cat) }}</span>
-                    </div>
-                </div>
+			<main class="relative flex-1 overflow-hidden">
+				<transition :name="transitionName">
 
-                <div v-else-if="view === 'subcategories'" key="subcategories" class="grid-layout">
-                    <div v-for="sub in (currentCategory ? currentCategory[2] : [])" @click="selectSub(sub)"
-                         class="bg-white rounded-2xl shadow-sm border border-slate-200 flex flex-col items-center justify-center cursor-pointer active:scale-95 transition-all">
-                        <span class="text-4xl mb-1">{{ sub[0] }}</span>
-                        <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest">{{ getTranslation(sub) }}</span>
-                    </div>
-                </div>
+				<div v-if="view === 'categories'" key="categories" class="grid-layout">
+					<div v-for="cat in mockData" @click="selectCategory(cat)"
+							 class="bg-white rounded-2xl shadow-sm border border-slate-200 flex flex-col items-center justify-center cursor-pointer active:scale-95 transition-all">
+						<span class="text-4xl mb-1">{{ cat[0] }}</span>
+						<span class="text-[10px] font-black text-slate-400 uppercase tracking-widest">{{ getTranslation(cat) }}</span>
+					</div>
+				</div>
 
-                <div v-else-if="view === 'study'" key="study" class="h-full relative">
-                    <transition name="slide-question">
-                        <div :key="roundCounter" class="h-full flex flex-col">
+				<div v-else-if="view === 'subcategories'" key="subcategories" class="grid-layout">
+					<div v-for="sub in (currentCategory ? currentCategory[2] : [])" @click="selectSub(sub)"
+							 class="bg-white rounded-2xl shadow-sm border border-slate-200 flex flex-col items-center justify-center cursor-pointer active:scale-95 transition-all">
+						<span class="text-4xl mb-1">{{ sub[0] }}</span>
+						<span class="text-[10px] font-black text-slate-400 uppercase tracking-widest">{{ getTranslation(sub) }}</span>
+					</div>
+				</div>
 
-                            <div class="flex flex-col items-center justify-center py-6 shrink-0">
-                                <h2 class="text-5xl font-black text-slate-900 mb-6 tracking-tight">
-                                    {{ currentPrompt ? currentPrompt[1] : '' }}
-                                </h2>
-                                <div class="flex items-center gap-8">
-                                    <button @click="playAudio(currentPrompt[2])"
-                                            class="w-16 h-16 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center text-3xl hover:bg-blue-200 transition-colors">
-                                        🔊
-                                    </button>
-                                    <button @click="setupStudyRound"
-                                            class="w-16 h-16 bg-slate-100 text-slate-500 rounded-full flex items-center justify-center text-3xl hover:bg-slate-200 transition-colors">
-                                        ⏭️
-                                    </button>
-                                </div>
-                            </div>
+				<div v-else-if="view === 'study'" key="study" class="h-full relative">
+					<transition name="slide-question">
+					<div :key="roundCounter" class="h-full flex flex-col">
 
-                            <div class="grid-layout flex-1 pb-4">
-                                <div v-for="opt in studyOptions" @click="checkAnswer(opt)"
-                                     :class="['rounded-2xl shadow-sm border-2 flex flex-col items-center justify-center cursor-pointer transition-all',
-                                     feedback.item === opt ? (feedback.correct ? 'bg-green-500 border-green-600 text-white' : 'bg-red-500 border-red-600 text-white animate-shake') : 'bg-white border-slate-200 active:scale-95']">
-                                    <span class="text-4xl mb-1">{{ opt[0] }}</span>
-                                    <span v-if="settings.mode !== 'No Words'" class="text-[10px] font-black uppercase opacity-60 tracking-tighter">
-                                        {{ getTranslation(opt) }}
-                                    </span>
-                                </div>
-                            </div>
+						<div class="flex flex-col items-center justify-center py-6 shrink-0">
+							<h2 class="text-5xl font-black text-slate-900 mb-6 tracking-tight">
+								{{ currentPrompt ? currentPrompt[1] : '' }}
+							</h2>
+							<div class="flex items-center gap-8">
+								<button @click="playAudio(currentPrompt[2])"
+									 class="w-16 h-16 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center text-3xl hover:bg-blue-200 transition-colors">
+									🔊
+								</button>
+								<button @click="setupStudyRound"
+									 class="w-16 h-16 bg-slate-100 text-slate-500 rounded-full flex items-center justify-center text-3xl hover:bg-slate-200 transition-colors">
+									⏭️
+								</button>
+							</div>
+						</div>
 
-                        </div>
-                    </transition>
-                </div>
+						<div class="grid-layout flex-1 pb-4">
+							<div v-for="opt in studyOptions" @click="checkAnswer(opt)"
+									 :class="['rounded-2xl shadow-sm border-2 flex flex-col items-center justify-center cursor-pointer transition-all',
+																	feedback.item === opt ? (feedback.correct ? 'bg-green-500 border-green-600 text-white' : 'bg-red-500 border-red-600 text-white animate-shake') : 'bg-white border-slate-200 active:scale-95']">
+								<span class="text-4xl mb-1">{{ opt[0] }}</span>
+								<span v-if="settings.mode !== 'No Words'" class="text-[10px] font-black uppercase opacity-60 tracking-tighter">
+									{{ getTranslation(opt) }}
+								</span>
+							</div>
+						</div>
 
-            </transition>
-        </main>
+					</div>
+					</transition>
+				</div>
 
-        <div v-if="showSettings" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[100] flex items-center justify-center p-6" @click.self="showSettings = false">
-            <div class="bg-white rounded-[2.5rem] p-8 w-full max-w-xs shadow-2xl">
-                <div class="flex justify-between items-center mb-10">
-                    <h3 class="text-xl font-black text-slate-800 uppercase tracking-tight">Settings</h3>
-                    <button @click="showSettings = false" class="text-slate-300 text-2xl hover:text-slate-500 transition-colors">✕</button>
-                </div>
-                <div class="space-y-12">
-                    <div class="flex items-center justify-between">
-                        <span class="text-3xl">🌎</span>
-                        <div class="flex bg-slate-100 p-1.5 rounded-2xl">
-                            <button v-for="m in ['No Words', 'English', 'Russian']" @click="settings.mode = m"
-                                    :class="['px-4 py-2 rounded-xl text-[10px] font-black uppercase transition-all', settings.mode === m ? 'bg-white shadow-md text-blue-600' : 'text-slate-400']">
-                                {{ m === 'No Words' ? 'Ø' : m.substring(0,2) }}
-                            </button>
-                        </div>
-                    </div>
-                    <div class="flex items-center justify-between">
-                        <span class="text-3xl">{{ settings.audioEnabled ? '🔊' : '🔇' }}</span>
-                        <button @click="settings.audioEnabled = !settings.audioEnabled"
-                                :class="['w-16 h-9 rounded-full relative transition-all', settings.audioEnabled ? 'bg-blue-500' : 'bg-slate-300']">
-                            <div :class="['absolute top-1 w-7 h-7 bg-white rounded-full shadow-sm transition-all', settings.audioEnabled ? 'left-8' : 'left-1']"></div>
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
+				</transition>
+			</main>
 
-    <script type="module">
-        import { App } from './app.js';
-        Vue.createApp(App).mount('#app');
-    </script>
-</body>
+			<footer class="shrink-0 pt-2 pb-1 text-center border-t border-slate-200">
+				<p class="text-[10px] text-slate-400 font-medium tracking-wide uppercase">
+				© KartuWords • All Rights Reserved
+				</p>
+			</footer>
+
+			<div v-if="showSettings" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[100] flex items-center justify-center p-6" @click.self="showSettings = false">
+				<div class="bg-white rounded-[2.5rem] p-8 w-full max-w-xs shadow-2xl">
+					<div class="flex justify-between items-center mb-10">
+						<h3 class="text-xl font-black text-slate-800 uppercase tracking-tight">Settings</h3>
+						<button @click="showSettings = false" class="text-slate-300 text-2xl hover:text-slate-500 transition-colors">✕</button>
+					</div>
+					<div class="space-y-12">
+						<div class="flex items-center justify-between">
+							<span class="text-3xl">🌎</span>
+							<div class="flex bg-slate-100 p-1.5 rounded-2xl">
+								<button v-for="m in ['No Words', 'English', 'Russian']" @click="settings.mode = m"
+												:class="['px-4 py-2 rounded-xl text-[10px] font-black uppercase transition-all', settings.mode === m ? 'bg-white shadow-md text-blue-600' : 'text-slate-400']">
+									{{ m === 'No Words' ? 'Ø' : m.substring(0,2) }}
+								</button>
+							</div>
+						</div>
+						<div class="flex items-center justify-between">
+							<span class="text-3xl">{{ settings.audioEnabled ? '🔊' : '🔇' }}</span>
+							<button @click="settings.audioEnabled = !settings.audioEnabled"
+										:class="['w-16 h-9 rounded-full relative transition-all', settings.audioEnabled ? 'bg-blue-500' : 'bg-slate-300']">
+								<div :class="['absolute top-1 w-7 h-7 bg-white rounded-full shadow-sm transition-all', settings.audioEnabled ? 'left-8' : 'left-1']"></div>
+							</button>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+
+
+		<script type="module">
+			import { App } from './app.js';
+				Vue.createApp(App).mount('#app');
+		</script>
+	</body>
 </html>
