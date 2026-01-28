@@ -1,0 +1,34 @@
+cat order,subcat order,parent category,emoji,english,count,georgian,russian
+1,1,Foundations,👋,Basics,26,საფუძვლები,Основы
+1,2,Foundations,❓,Questions,16,კითხვები,Вопросы
+1,3,Foundations,🔢,Numbers,23,რიცხვები,Числа
+1,4,Foundations,🕜,Times & Dates,22,დრო და თარიღები,Время и даты
+1,5,Foundations,🆘,Help,13,დახმარება,Помощь
+2,1,People,🏃,Actions,50,მოქმედებები,Действия
+2,2,People,👨‍👩‍👧‍👦,Family,15,ოჯახი,Семья
+2,3,People,🤝,Social,12,ურთიერთობა,Общение
+2,4,People,💼,Professions,22,პროფესიები,Профессии
+2,5,People,💪,Body,22,სხეული,Тело
+2,6,People,🥰,Feelings,21,გრძნობები,Чувства
+3,1,Home,🛋️,Rooms,13,ოთახები,Комнаты
+3,2,Home,🪑,Furniture,10,ავეჯი,Мебель
+3,3,Home,🚿,Appliances,20,ტექნიკა,техника
+3,4,Home,👕,Clothes,21,ტანსაცმელი,Одежда
+3,5,Home,📦,Items,41,ნივთები,Предметы
+3,6,Home,🖥️,Office,19,ოფისი,Офис
+4,1,Food,🍇,Fruits,15,ხილი,Фрукты
+4,2,Food,🥦,Vegetables,17,ბოსტნეული,Овощи
+4,3,Food,🐄,Meat & Dairy,15,ხორცი და რძის პროდუქტები,Мясо и молочные продукты
+4,4,Food,🧂,Pantry,13,ბაკალეა,Бакалея
+4,5,Food,🍕,Dishes,22,კერძები,Блюда
+4,6,Food,☕,Drinks,11,სასმელები,Напитки
+5,1,World,🏙️,City,24,ქალაქი,Город
+5,2,World,🚌,Transport,21,ტრანსპორტი,Транспорт
+5,3,World,🧭,Directions,14,მიმართულებები,Направления
+5,4,World,🏞️,Nature,24,ბუნება,Природа
+5,5,World,🐕,Animals,36,ცხოველები,Животные
+5,6,World,🌦️,Weather,12,ამინდი,Погода
+6,1,Attributes,​✨,Descriptors,34,ზედსართავები,Прилагательные
+6,2,Attributes,🔄,Frequency,12,სიხშირე,Частотность
+6,3,Attributes,🎨,Colors,19,ფერები,Цвета
+6,4,Attributes,🔺,Geometry,15,გეომეტრია,Геометрия
