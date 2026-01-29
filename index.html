@@ -7,13 +7,13 @@
 		<script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
 		<script src="https://cdn.tailwindcss.com"></script>
 		<style>
-/* Global Navigation Transitions */
-.slide-left-enter-active, .slide-left-leave-active,
-.slide-right-enter-active, .slide-right-leave-active {
-	transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-	position: absolute;
-	width: 100%;
-}
+				/* Global Navigation Transitions */
+				.slide-left-enter-active, .slide-left-leave-active,
+				.slide-right-enter-active, .slide-right-leave-active {
+					transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+					position: absolute;
+					width: 100%;
+				}
 				.slide-left-enter-from { transform: translateX(100%); opacity: 0; }
 				.slide-left-leave-to { transform: translateX(-100%); opacity: 0; }
 				.slide-right-enter-from { transform: translateX(-100%); opacity: 0; }
@@ -28,7 +28,7 @@
 				.slide-question-enter-from { transform: translateX(100%); opacity: 0; }
 				.slide-question-leave-to { transform: translateX(-100%); opacity: 0; }
 
-				html, body { height: 100%; overflow: hidden; margin: 0; background-color: #f8fafc; }
+				html, body { height: 100dvh; overflow: hidden; margin: 0; background-color: #f8fafc; }
 				.grid-layout {
 					display: grid;
 					grid-template-columns: repeat(2, 1fr);
@@ -38,9 +38,11 @@
 				}
 				/* Ensure the app container takes exactly the full height */
 				#app {
-					height: 100vh;
+					height: 100dvh;
 					display: flex;
 					flex-direction: column;
+					padding-bottom: env(safe-area-inset-bottom);
+    				padding-top: env(safe-area-inset-top);
 				}
 
 				/* Force the main content to take all available space */
@@ -135,7 +137,7 @@
 			<div v-if="showSettings" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[100] flex items-center justify-center p-6" @click.self="showSettings = false">
 				<div class="bg-white rounded-[2.5rem] p-8 w-full max-w-xs shadow-2xl">
 					<div class="flex justify-between items-center mb-10">
-						<h3 class="text-xl font-black text-slate-800 uppercase tracking-tight">⚙️<</h3>
+						<h3 class="text-xl font-black text-slate-800 uppercase tracking-tight">⚙️</h3>
 						<button @click="showSettings = false" class="text-slate-300 text-2xl hover:text-slate-500 transition-colors">✕</button>
 					</div>
 					<div class="space-y-12">
