@@ -29,6 +29,9 @@
 				.slide-question-leave-to { transform: translateX(-100%); opacity: 0; }
 
 				html, body { height: 100dvh; overflow: hidden; margin: 0; background-color: #f8fafc; }
+				body {
+					background-color: #f8fafc;
+				}
 				.grid-layout {
 					display: grid;
 					grid-template-columns: repeat(2, 1fr);
@@ -43,6 +46,7 @@
 					flex-direction: column;
 					padding-bottom: env(safe-area-inset-bottom);
     				padding-top: env(safe-area-inset-top);
+					transition: opacity 0.4s ease-in;
 				}
 
 				/* Force the main content to take all available space */
@@ -51,10 +55,14 @@
 					position: relative;
 					overflow: hidden;
 				}
+
+				[v-cloak] {
+				  opacity: 0;
+				}
 		</style>
 	</head>
 	<body class="font-sans antialiased text-slate-900">
-		<div id="app" class="h-screen flex flex-col p-4 max-w-md mx-auto relative overflow-hidden">
+		<div id="app" v-cloak class="h-screen flex flex-col p-4 max-w-md mx-auto relative overflow-hidden">
 
 			<header class="flex justify-between items-center mb-2 z-50 shrink-0 h-12">
 				<div class="flex items-center gap-1 text-2xl font-bold">
